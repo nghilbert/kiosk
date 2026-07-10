@@ -11,7 +11,7 @@ import SwiftUI
 struct kioskApp: App {
     var body: some Scene {
         WindowGroup {
-            KioskView(url: URL(string: "https://davc-route-lsavt-davc01.apps.paas03.ilstu.edu/touchpad")!).ignoresSafeArea().statusBarHidden(true)
+        KioskView(url: URL(string: "https://davc-route-lsavt-davc02-t.apps.paas02-t.ilstu.edu/touchpad")!).ignoresSafeArea().statusBarHidden(true)
         }
     }
 }
