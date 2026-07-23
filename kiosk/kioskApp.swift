@@ -9,9 +9,21 @@ import SwiftUI
 
 @main
 struct kioskApp: App {
+    @State private var configManager = AppConfigManager()
+    @Environment(\.scenePhase) private var scenePhase
+
     var body: some Scene {
         WindowGroup {
-        KioskView(url: URL(string: "https://davc-route-lsavt-davc02-t.apps.paas02-t.ilstu.edu/touchpad")!).ignoresSafeArea().statusBarHidden(true)
+            Group {
+                if let validURL = URL(string: configManager.activeURLString) {
+                    KioskView(url: validURL).environment(configManager).statusBarHidden(true)
+                }
+            }
+            .onChange(of: scenePhase) { _, newPhase in
+                if newPhase == .active {
+                    UserDefaults.standard.synchronize()
+                }
+            }
         }
     }
 }

@@ -23,7 +23,12 @@ struct KioskView: UIViewRepresentable {
         return webView
     }
     
-    func updateUIView(_ uiView: WKWebView, context: Context) {}
+    // Loads a new URL whenever it is changed through jamf
+    func updateUIView(_ uiView: WKWebView, context: Context) {
+        if uiView.url?.absoluteString != url.absoluteString {
+            uiView.load(URLRequest(url: url))
+        }
+    }
     
     func makeCoordinator() -> Coordinator {
         Coordinator()
