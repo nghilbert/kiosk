@@ -9,20 +9,23 @@ import SwiftUI
 
 @main
 struct kioskApp: App {
+    // Manages tracking and streaming of MDM updates
     @State private var configManager = AppConfigManager()
-    @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
             Group {
-                if let validURL = URL(string: configManager.activeURLString) {
-                    KioskView(url: validURL).environment(configManager).statusBarHidden(true)
+                if let validURL = configManager.activeURL {
+                    KioskView(url: validURL) // Render kiosk for a valid URL
+                } else {
+                    MissingConfigView() // Show missing config for an invalid URL
                 }
             }
-            .onChange(of: scenePhase) { _, newPhase in
-                if newPhase == .active {
-                    UserDefaults.standard.synchronize()
-                }
+            .statusBarHidden(true)
+            .environment(configManager)
+            .task {
+                // On app launch, start listening for live MDM configuration updates
+                await configManager.listenForMDMUpdates()
             }
         }
     }
