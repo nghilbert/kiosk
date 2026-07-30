@@ -15,14 +15,21 @@ struct kioskApp: App {
     var body: some Scene {
         WindowGroup {
             Group {
-                if let validURL = configManager.activeURL {
-                    KioskView(url: validURL) // Render kiosk for a valid URL
-                } else {
-                    MissingConfigView() // Show missing config for an invalid URL
+                // Choose a view according to the configuration status
+                switch configManager.status {
+                    case .pending:
+                        ProgressView()
+                    case .configured(let url):
+                        KioskView(url: url)
+                    case .unconfigured:
+                        MissingConfigView()
                 }
             }
+            .background(Color(.systemBackground))
+            .persistentSystemOverlays(.hidden)
+            .defersSystemGestures(on: .all)
+            .ignoresSafeArea()
             .statusBarHidden(true)
-            .environment(configManager)
             .task {
                 // On app launch, start listening for live MDM configuration updates
                 await configManager.listenForMDMUpdates()

@@ -8,44 +8,16 @@
 import SwiftUI
 import WebKit
 
-struct KioskView: UIViewRepresentable {
+struct KioskView: View {
     let url: URL
-
-    func makeUIView(context: Context) -> WKWebView {
-        let config = WKWebViewConfiguration()
-        
-        let webView = WKWebView(frame: .zero, configuration: config)
-        
-        webView.navigationDelegate = context.coordinator
-        webView.scrollView.contentInsetAdjustmentBehavior = .never
-        webView.load(URLRequest(url: url))
-        
-        return webView
-    }
     
-    // Loads a new URL whenever it is changed through jamf
-    func updateUIView(_ uiView: WKWebView, context: Context) {
-        if uiView.url?.absoluteString != url.absoluteString {
-            uiView.load(URLRequest(url: url))
-        }
-    }
+    // Persistent web page state
+    @State private var page = WebPage(configuration: .init())
     
-    func makeCoordinator() -> Coordinator {
-        Coordinator()
-    }
-    
-    class Coordinator: NSObject, WKNavigationDelegate {
-        func webView(
-            _ webView: WKWebView,
-            decidePolicyFor navigationAction: WKNavigationAction,
-            decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
-        ) {
-            if  navigationAction.request.url?.host != nil {
-                decisionHandler(.allow)
-            } else {
-                decisionHandler(.cancel)
-            }
+    var body: some View {
+        // Updates the view every time the url changes
+        WebView(page).task(id: url) {
+            page.load(URLRequest(url: url))
         }
     }
 }
-

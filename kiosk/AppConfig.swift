@@ -23,9 +23,17 @@ private struct KioskConfiguration: Decodable {
 @Observable
 @MainActor
 final class AppConfigManager {
+    // Status of the config (Equatable allows equality operations)
+    enum ConfigStatus: Equatable {
+        case pending
+        case configured(URL)
+        case unconfigured
+    }
+    
     private let provider = ManagedAppConfigurationProvider()
-    // The active kiosk URL, observed by swiftUI views to trigger UI updates
-    var activeURL: URL?
+    
+    // Stores the current configuration status
+    var status: ConfigStatus = .pending
     
     // Continuously listens for configuration updates streamed from the MDM provider
     func listenForMDMUpdates() async {
@@ -33,10 +41,17 @@ final class AppConfigManager {
         let sequence = await provider.configurations(KioskConfiguration.self)
         
         for await config in sequence {
-            let newURL = config?.kioskURLOverride
-            // Only update the active URL if it has changed
-            if self.activeURL != newURL {
-                self.activeURL = newURL
+            let newStatus: ConfigStatus
+            // Add URL to status if valid
+            if let validURL = config?.kioskURLOverride {
+                newStatus = .configured(validURL)
+            } else {
+                newStatus = .unconfigured
+            }
+
+            // Only update the status if it has changed
+            if self.status != newStatus {
+                self.status = newStatus
             }
         }
     }
