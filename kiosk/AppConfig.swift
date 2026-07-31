@@ -12,11 +12,11 @@ import ManagedApp
 // The configuration payload pushed down from MDM
 private struct KioskConfiguration: Decodable {
     // The kiosk URL, parsed implicitly into the native URL type by Decodable
-    private(set) var kioskURLOverride: URL?
+    private(set) var kioskURL: URL?
     
     // Maps Swift's camelCase convention to Jamf's PascalCase convention
     enum CodingKeys: String, CodingKey {
-        case kioskURLOverride = "KioskURLOverride"
+        case kioskURL = "KioskURL"
     }
 }
 
@@ -43,7 +43,7 @@ final class AppConfigManager {
         for await config in sequence {
             let newStatus: ConfigStatus
             // Add URL to status if valid
-            if let validURL = config?.kioskURLOverride {
+            if let validURL = config?.kioskURL {
                 newStatus = .configured(validURL)
             } else {
                 newStatus = .unconfigured

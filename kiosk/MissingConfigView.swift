@@ -18,7 +18,7 @@ struct MissingConfigView: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
             
-            Text("This kiosk is waiting to receive its URL.\nPlease configure the 'KioskURLOverride' key in your MDM.")
+            Text("This kiosk is waiting to receive its URL.\nPlease configure the 'KioskURL' key in your MDM.")
                 .font(.title3)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
