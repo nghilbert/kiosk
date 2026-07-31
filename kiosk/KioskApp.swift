@@ -1,5 +1,5 @@
 //
-//  kioskApp.swift
+//  KioskApp.swift
 //  kiosk
 //
 //  Created by Hilbert (WORK), Nathan on 7/9/26.
@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct kioskApp: App {
+struct KioskApp: App {
     // Manages tracking and streaming of MDM updates
     @State private var configManager = AppConfigManager()
 
